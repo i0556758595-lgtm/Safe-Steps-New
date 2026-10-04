@@ -1,4 +1,3 @@
-
 package com.example.safesteps;
 
 import android.accessibilityservice.AccessibilityService;
@@ -83,12 +82,23 @@ public class GuardAccessibilityService extends AccessibilityService {
             return true;
         }
 
-        if ((allText.contains("מנהלי המכשיר")
+        /*
+         * חסימת מסך רשימת האפליקציות שמנהלות את המכשיר.
+         * הניסוחים משתנים בין גרסאות Android ויצרנים שונים,
+         * לכן נבדקים כמה ניסוחים אפשריים.
+         */
+        if (allText.contains("מנהלי המכשיר")
                 || allText.contains("מנהלי מכשירים")
+                || allText.contains("אפליקציות שמנהלות את המכשיר")
+                || allText.contains("יישומים שמנהלים את המכשיר")
+                || allText.contains("אפליקציות מנהלות את המכשיר")
+                || allText.contains("יישומים מנהלים את המכשיר")
+                || allText.contains("אפליקציות שמנהלות מכשיר זה")
+                || allText.contains("יישומים שמנהלים מכשיר זה")
                 || allText.contains("device administrators")
-                || allText.contains("device admin"))
-                && (className.contains("settings")
-                || className.contains("subsettings"))) {
+                || allText.contains("device administrator")
+                || allText.contains("device admin apps")
+                || allText.contains("device admin")) {
             return true;
         }
 
