@@ -76,6 +76,16 @@ public class GuardAccessibilityService extends AccessibilityService {
             return true;
         }
 
+        // שלב מקדים: חסימת "הגדרות אבטחה נוספות"
+        // לפני שמגיעים למסך "אפליקציות שמנהלות את המכשיר".
+        if (allText.contains("הגדרות אבטחה נוספות")
+                || allText.contains("additional security settings")
+                || allText.contains("additional security")
+                || className.contains("securitysettings")
+                || className.contains("security_settings")) {
+            return true;
+        }
+
         // מסכי מנהלי מכשיר
         if (className.contains("deviceadmin")
                 || className.contains("device_admin")) {
@@ -147,11 +157,9 @@ public class GuardAccessibilityService extends AccessibilityService {
 
         showProtectionScreen();
 
+        // חסימה במהירות המקסימלית האפשרית.
         handler.postDelayed(
-                () -> performGlobalAction(GLOBAL_ACTION_BACK), 10);
-
-        handler.postDelayed(
-                () -> performGlobalAction(GLOBAL_ACTION_HOME), 40);
+                () -> performGlobalAction(GLOBAL_ACTION_BACK), 0);
     }
 
     private void showProtectionScreen() {
