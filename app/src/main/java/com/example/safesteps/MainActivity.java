@@ -550,33 +550,117 @@ public class MainActivity extends Activity {
     }
 
     private void chooseType() {
-        RadioGroup group = new RadioGroup(this);
 
-        RadioButton pinRadio =
-                new RadioButton(this);
+        LinearLayout container =
+                new LinearLayout(this);
 
-        pinRadio.setText("סיסמה מספרית");
+        container.setOrientation(
+                LinearLayout.VERTICAL
+        );
 
-        RadioButton patternRadio =
-                new RadioButton(this);
+        container.setPadding(
+                dp(18),
+                dp(8),
+                dp(18),
+                dp(8)
+        );
 
-        patternRadio.setText("סיסמת קווים");
+        TextView description = txt(
+                "בחרו כיצד תרצו להגן על מנהל Safe Steps",
+                16,
+                Color.rgb(91, 105, 126),
+                false
+        );
 
-        pinRadio.setTextSize(18);
-        patternRadio.setTextSize(18);
+        description.setGravity(Gravity.CENTER);
 
-        group.addView(pinRadio);
-        group.addView(patternRadio);
+        container.addView(
+                description,
+                new LinearLayout.LayoutParams(
+                        -1,
+                        dp(48)
+                )
+        );
 
-        pinRadio.setChecked(true);
+        LinearLayout pinCard =
+                passwordTypeCard(
+                        "123",
+                        "סיסמה מספרית",
+                        "קוד מספרי שקל להזין"
+                );
+
+        LinearLayout patternCard =
+                passwordTypeCard(
+                        "✦",
+                        "סיסמת קווים",
+                        "ציור תבנית על גבי 9 נקודות"
+                );
+
+        container.addView(
+                pinCard,
+                new LinearLayout.LayoutParams(
+                        -1,
+                        dp(86)
+                )
+        );
+
+        LinearLayout.LayoutParams patternParams =
+                new LinearLayout.LayoutParams(
+                        -1,
+                        dp(86)
+                );
+
+        patternParams.topMargin = dp(12);
+
+        container.addView(
+                patternCard,
+                patternParams
+        );
+
+        final boolean[] patternSelected = {false};
+
+        pinCard.setOnClickListener(v -> {
+            patternSelected[0] = false;
+
+            selectPasswordCard(
+                    pinCard,
+                    false
+            );
+
+            selectPasswordCard(
+                    patternCard,
+                    true
+            );
+        });
+
+        patternCard.setOnClickListener(v -> {
+            patternSelected[0] = true;
+
+            selectPasswordCard(
+                    pinCard,
+                    true
+            );
+
+            selectPasswordCard(
+                    patternCard,
+                    false
+            );
+        });
+
+        selectPasswordCard(
+                pinCard,
+                false
+        );
+
+        selectPasswordCard(
+                patternCard,
+                true
+        );
 
         AlertDialog dialog =
                 new AlertDialog.Builder(this)
                         .setTitle("בחירת סוג סיסמה")
-                        .setMessage(
-                                "בחרו את סוג האימות החדש"
-                        )
-                        .setView(group)
+                        .setView(container)
                         .setNegativeButton(
                                 "ביטול",
                                 null
@@ -596,7 +680,7 @@ public class MainActivity extends Activity {
 
                                     dialog.dismiss();
 
-                                    if (patternRadio.isChecked()) {
+                                    if (patternSelected[0]) {
                                         newPattern();
                                     } else {
                                         newPin();
@@ -606,6 +690,120 @@ public class MainActivity extends Activity {
         );
 
         dialog.show();
+    }
+
+    private LinearLayout passwordTypeCard(
+            String icon,
+            String title,
+            String subtitle
+    ) {
+
+        LinearLayout card =
+                new LinearLayout(this);
+
+        card.setOrientation(
+                LinearLayout.HORIZONTAL
+        );
+
+        card.setGravity(
+                Gravity.CENTER_VERTICAL
+        );
+
+        card.setPadding(
+                dp(18),
+                dp(10),
+                dp(18),
+                dp(10)
+        );
+
+        TextView iconView =
+                txt(
+                        icon,
+                        28,
+                        Color.rgb(40, 125, 225),
+                        true
+                );
+
+        iconView.setGravity(
+                Gravity.CENTER
+        );
+
+        card.addView(
+                iconView,
+                new LinearLayout.LayoutParams(
+                        dp(60),
+                        -1
+                )
+        );
+
+        LinearLayout texts =
+                new LinearLayout(this);
+
+        texts.setOrientation(
+                LinearLayout.VERTICAL
+        );
+
+        texts.setGravity(
+                Gravity.CENTER_VERTICAL
+        );
+
+        TextView titleView =
+                txt(
+                        title,
+                        19,
+                        Color.rgb(20, 43, 76),
+                        true
+                );
+
+        TextView subtitleView =
+                txt(
+                        subtitle,
+                        14,
+                        Color.rgb(91, 105, 126),
+                        false
+                );
+
+        texts.addView(titleView);
+        texts.addView(subtitleView);
+
+        texts.setLayoutParams(
+                new LinearLayout.LayoutParams(
+                        0,
+                        -1,
+                        1
+                )
+        );
+
+        card.addView(texts);
+
+        return card;
+    }
+
+    private void selectPasswordCard(
+            View card,
+            boolean muted
+    ) {
+
+        card.setBackground(
+                grad(
+                        muted
+                                ? new int[]{
+                                        Color.rgb(247, 250, 255),
+                                        Color.rgb(241, 245, 250)
+                                }
+                                : new int[]{
+                                        Color.rgb(218, 238, 255),
+                                        Color.rgb(232, 244, 255)
+                                },
+                        dp(18)
+                )
+        );
+
+        card.setAlpha(
+                muted
+                        ? 0.65f
+                        : 1f
+        );
     }
 
     private void newPin() {
@@ -774,47 +972,115 @@ public class MainActivity extends Activity {
         PatternLockView patternView =
                 new PatternLockView(this);
 
+        LinearLayout container =
+                new LinearLayout(this);
+
+        container.setOrientation(
+                LinearLayout.VERTICAL
+        );
+
+        container.setGravity(
+                Gravity.CENTER_HORIZONTAL
+        );
+
+        container.setPadding(
+                dp(12),
+                dp(4),
+                dp(12),
+                dp(8)
+        );
+
+        TextView instruction =
+                txt(
+                        "ציירו את התבנית ולאחר מכן לחצו על אישור והמשך",
+                        15,
+                        Color.rgb(91, 105, 126),
+                        false
+                );
+
+        instruction.setGravity(
+                Gravity.CENTER
+        );
+
+        container.addView(
+                instruction,
+                new LinearLayout.LayoutParams(
+                        -1,
+                        dp(55)
+                )
+        );
+
+        container.addView(
+                patternView,
+                new LinearLayout.LayoutParams(
+                        dp(280),
+                        dp(280)
+                )
+        );
+
+        TextView confirm =
+                txt(
+                        "אישור והמשך",
+                        17,
+                        Color.WHITE,
+                        true
+                );
+
+        confirm.setGravity(
+                Gravity.CENTER
+        );
+
+        confirm.setBackground(
+                grad(
+                        new int[]{
+                                Color.rgb(40, 125, 225),
+                                Color.rgb(61, 46, 180)
+                        },
+                        dp(18)
+                )
+        );
+
+        LinearLayout.LayoutParams confirmParams =
+                new LinearLayout.LayoutParams(
+                        -1,
+                        dp(54)
+                );
+
+        confirmParams.topMargin =
+                dp(12);
+
+        container.addView(
+                confirm,
+                confirmParams
+        );
+
         AlertDialog dialog =
                 new AlertDialog.Builder(this)
                         .setTitle(title)
-                        .setMessage(
-                                "יש לבחור לפחות 4 נקודות"
-                        )
-                        .setView(patternView)
+                        .setView(container)
                         .setNegativeButton(
                                 "ביטול",
                                 null
                         )
-                        .setPositiveButton(
-                                "המשך",
-                                null
-                        )
                         .create();
 
-        dialog.setOnShowListener(
-                dialogListener ->
-                        dialog.getButton(
-                                AlertDialog.BUTTON_POSITIVE
-                        ).setOnClickListener(
-                                clickView -> {
+        confirm.setOnClickListener(v -> {
 
-                                    String pattern =
-                                            patternView.getPattern();
+            String pattern =
+                    patternView.getPattern();
 
-                                    if (pattern.length() < 4) {
-                                        Toast.makeText(
-                                                this,
-                                                "לפחות 4 נקודות",
-                                                Toast.LENGTH_SHORT
-                                        ).show();
-                                        return;
-                                    }
+            if (pattern.length() < 4) {
+                Toast.makeText(
+                        this,
+                        "לפחות 4 נקודות",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
 
-                                    dialog.dismiss();
-                                    done.go(pattern);
-                                }
-                        )
-        );
+            dialog.dismiss();
+            done.go(pattern);
+        });
 
         dialog.show();
     }
